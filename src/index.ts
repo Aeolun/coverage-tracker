@@ -29,7 +29,7 @@ const hasRequiredParams = (obj): boolean => {
 createConnection().then(async connection => {
   const app = express();
   app.use(json())
-  app.use(morgan())
+  app.use(morgan(process.env.NODE_ENV == 'dev' ? 'dev' : 'combined'))
   app.get('/', (req, res) => {
     res.send('Ok')
   })
