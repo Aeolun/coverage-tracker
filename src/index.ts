@@ -43,17 +43,20 @@ createConnection().then(async connection => {
   })
   app.get<ProjectParams>('/coverage/:projectName/:testName/check', async (req, res) => {
     if (hasRequiredParams(req.query)) {
-      const newCoveragePercent = (parseInt(req.query.coveredStatements) + parseInt(req.query.coveredConditionals) + parseInt(req.query.coveredMethods)) / (parseInt(req.query.statements) + parseInt(req.query.conditionals) + parseInt(req.query.methods))
+      const newCoveragePercent = Math.round((parseInt(req.query.coveredStatements) + parseInt(req.query.coveredConditionals) + parseInt(req.query.coveredMethods)) / (parseInt(req.query.statements) + parseInt(req.query.conditionals) + parseInt(req.query.methods))*1000)/1000
       const currentCoverage = await connection.manager.findOne(Coverage, {
         where: {
           projectName: req.params.projectName,
           testName: req.params.testName
+        },
+        order: {
+          createdDate: 'DESC'
         }
       });
       if (!currentCoverage) {
         res.status(200).send(newCoveragePercent + "% >= 0")
       } else {
-        if (newCoveragePercent >= currentCoverage.getTotalCoverage()) {
+        if (newCoveragePercent >= currentCoverage.getCoveragePercent()) {
           res.status(200).send(newCoveragePercent + "% >= " + currentCoverage.getCoveragePercent()+"%")
         } else {
           res.status(409).send("New coverage (" + newCoveragePercent + "%) needs to equal or exceed current coverage (" + currentCoverage.getCoveragePercent() + "%).")

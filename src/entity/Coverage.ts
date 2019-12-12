@@ -45,6 +45,6 @@ export class Coverage {
     }
 
     public getCoveragePercent() {
-        return this.getTotalCoverage()/this.getTotalToCover()
+        return Math.round(this.getTotalCoverage()/this.getTotalToCover()*1000)/1000
     }
 }
