@@ -39,4 +39,12 @@ export class Coverage {
     public getTotalCoverage(): number {
         return this.coveredStatements + this.coveredMethods + this.coveredConditionals
     }
+
+    public getTotalToCover(): number {
+        return this.statements + this.methods + this.conditionals
+    }
+
+    public getCoveragePercent() {
+        return this.getTotalCoverage()/this.getTotalToCover()
+    }
 }
