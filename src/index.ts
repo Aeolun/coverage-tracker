@@ -51,7 +51,7 @@ createConnection().then(async connection => {
         }
       });
       if (!currentCoverage) {
-        res.status(200).send(newCoverage + " >= " + currentCoverage.getTotalCoverage())
+        res.status(200).send(newCoverage + " >= ?")
       } else {
         if (newCoverage >= currentCoverage.getTotalCoverage()) {
           res.status(200).send(newCoverage + " >= " + currentCoverage.getTotalCoverage())
