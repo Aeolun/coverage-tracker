@@ -3,48 +3,54 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity()
 export class Coverage {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    projectName: string;
+  @Column()
+  projectName: string;
 
-    @Column()
-    testName: string;
+  @Column()
+  branch: string;
 
-    @Column()
-    statements: number;
+  @Column()
+  baseBranch: string;
 
-    @Column()
-    conditionals: number;
+  @Column()
+  testName: string;
 
-    @Column()
-    methods: number;
+  @Column()
+  statements: number;
 
-    @Column()
-    coveredStatements: number;
+  @Column()
+  conditionals: number;
 
-    @Column()
-    coveredConditionals: number;
+  @Column()
+  methods: number;
 
-    @Column()
-    coveredMethods: number;
+  @Column()
+  coveredStatements: number;
 
-    @CreateDateColumn()
-    createdDate: Date;
+  @Column()
+  coveredConditionals: number;
 
-    @UpdateDateColumn()
-    updatedDate: Date;
+  @Column()
+  coveredMethods: number;
 
-    public getTotalCoverage(): number {
-        return this.coveredStatements + this.coveredMethods + this.coveredConditionals
-    }
+  @CreateDateColumn()
+  createdDate: Date;
 
-    public getTotalToCover(): number {
-        return this.statements + this.methods + this.conditionals
-    }
+  @UpdateDateColumn()
+  updatedDate: Date;
 
-    public getCoveragePercent() {
-        return Math.round(this.getTotalCoverage()/this.getTotalToCover()*1000)/1000
-    }
+  public getTotalCoverage(): number {
+    return this.coveredStatements + this.coveredMethods + this.coveredConditionals
+  }
+
+  public getTotalToCover(): number {
+    return this.statements + this.methods + this.conditionals
+  }
+
+  public getCoveragePercent() {
+    return Math.round(this.getTotalCoverage() / this.getTotalToCover() * 10000) / 100
+  }
 }
