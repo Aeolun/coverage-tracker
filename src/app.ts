@@ -7,6 +7,7 @@ import { Coverage } from './entity/Coverage'
 import { json } from 'express'
 import morgan from 'morgan'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { BadgeFactory } from 'gh-badges'
 
 interface ProjectParams extends ParamsDictionary {
   projectName: string
@@ -14,19 +15,29 @@ interface ProjectParams extends ParamsDictionary {
   testName: string
 }
 
-const requiredProperties = [
+const checkRequiredProperties = [
   'coveredConditionals',
   'coveredStatements',
   'coveredMethods',
   'conditionals',
   'statements',
   'methods',
-  'baseBranch'
+  'baseBranch',
 ]
 
-const hasRequiredParams = (obj): boolean => {
+const saveRequiredProperties = [
+  'coveredConditionals',
+  'coveredStatements',
+  'coveredMethods',
+  'conditionals',
+  'statements',
+  'methods',
+  'baseBranch',
+  'ref'
+]
+
+const hasRequiredParams = (obj, requiredProperties: any[]): boolean => {
   let result = true
-  console.log(obj)
   requiredProperties.forEach(prop => {
     if (!obj[prop]) {
       result = false
@@ -59,7 +70,7 @@ app.get('/', (req, res) => {
   res.status(200).send('Ok')
 })
 app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/check', async (req, res) => {
-  if (hasRequiredParams(req.query)) {
+  if (hasRequiredParams(req.query, checkRequiredProperties)) {
     const newCoveragePercent = Math.round((parseInt(req.query.coveredStatements) + parseInt(req.query.coveredConditionals) + parseInt(req.query.coveredMethods)) / (parseInt(req.query.statements) + parseInt(req.query.conditionals) + parseInt(req.query.methods)) * 10000) / 100
     let currentCoverage
     let extra: string = ""
@@ -96,7 +107,7 @@ app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/check', async (
       }
     }
   } else {
-    res.status(400).send("Missing required parameters: " + requiredProperties.join(', '))
+    res.status(400).send("Missing required parameters: " + checkRequiredProperties.join(', '))
   }
 })
 app.get<ProjectParams>('/coverage/:projectName/:branch/:testName', async (req, res) => {
@@ -112,6 +123,30 @@ app.get<ProjectParams>('/coverage/:projectName/:branch/:testName', async (req, r
   } else {
     res.status(404).send("Project/branch and/or test does not exist.")
   }
+})
+app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/badge', async (req, res) => {
+  const coverage = await connection.manager.find(Coverage, {
+    where: {
+      projectName: req.params.projectName,
+      branch: req.params.branch,
+      testName: req.params.testName
+    },
+    order: {
+      createdDate: 'DESC'
+    }
+  });
+
+  const bf = new BadgeFactory()
+
+  const format = {
+    text: [req.params.testName, coverage[0] ? coverage[0].getCoveragePercent() : 'Unknown'],
+    color: coverage[0] ? 'green' : 'lightgray',
+    template: 'flat',
+  }
+
+  const svg = bf.create(format)
+
+  res.status(200).set('content-type', 'image/svg+xml').send(svg)
 })
 app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/chart', async (req, res) => {
   const coverage = await connection.manager.find(Coverage, {
@@ -272,7 +307,6 @@ app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/chart', async (
       .toCanvas()
       .then(function (canvas: HTMLCanvasElement) {
         // process node-canvas instance for example, generate a PNG stream to write var
-        console.log('success')
         res.status(200)
         res.set('content-type', 'image/png')
         //@ts-ignore
@@ -284,7 +318,6 @@ app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/chart', async (
         }
       })
       .catch(function (err) {
-        console.log("Error writing PNG to file:")
         console.error(err)
         res.status(500)
         res.send(err.message)
@@ -294,13 +327,13 @@ app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/chart', async (
   }
 })
 app.post<ProjectParams>('/coverage/:projectName/:branch/:testName/save', (req, res) => {
-  if (hasRequiredParams(req.body)) {
+  if (hasRequiredParams(req.body, saveRequiredProperties)) {
     const newCoverage = new Coverage()
     newCoverage.projectName = req.params.projectName
     newCoverage.branch = req.params.branch
     newCoverage.testName = req.params.testName
 
-    requiredProperties.forEach(property => {
+    saveRequiredProperties.forEach(property => {
       newCoverage[property] = req.body[property]
     })
 
@@ -310,7 +343,7 @@ app.post<ProjectParams>('/coverage/:projectName/:branch/:testName/save', (req, r
       res.status(500).send(error.message)
     })
   } else {
-    res.status(400).send("Missing required parameters: " + requiredProperties.join(', '))
+    res.status(400).send("Missing required parameters: " + saveRequiredProperties.join(', '))
   }
 })
 

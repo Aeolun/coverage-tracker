@@ -28,7 +28,8 @@ describe('Endpoints', () => {
         'conditionals': 20,
         'statements': 20,
         'methods': 20,
-        'baseBranch': 'master'
+        'baseBranch': 'master',
+        'ref': '183c2d2879cf91589bd965833131b4ef9aee5edd'
       })
 
     expect(res.status).toEqual(200)
@@ -41,7 +42,7 @@ describe('Endpoints', () => {
       .get('/coverage/project/master/jest').send()
 
     expect(res.status).toEqual(200)
-    expect(res.body).toMatchObject([{ "baseBranch": "master", "branch": "master", "conditionals": 20, "coveredConditionals": 20, "coveredMethods": 20, "coveredStatements": 20, "id": 1, "methods": 20, "projectName": "project", "statements": 20, "testName": "jest" }])
+    expect(res.body).toMatchObject([{ "baseBranch": "master", "branch": "master", "conditionals": 20, "coveredConditionals": 20, "coveredMethods": 20, "coveredStatements": 20, "id": 1, "methods": 20, "projectName": "project", "statements": 20, "testName": "jest", "ref": "183c2d2879cf91589bd965833131b4ef9aee5edd" }])
 
     done()
   })
@@ -67,7 +68,7 @@ describe('Endpoints', () => {
         'baseBranch': 'master'
       })
     expect(res.status).toEqual(400)
-    expect(res.text).toEqual("Missing required parameters: coveredConditionals, coveredStatements, coveredMethods, conditionals, statements, methods, baseBranch")
+    expect(res.text).toEqual("Missing required parameters: coveredConditionals, coveredStatements, coveredMethods, conditionals, statements, methods, baseBranch, ref")
 
     done()
   })
@@ -124,6 +125,15 @@ describe('Endpoints', () => {
       .get('/coverage/project/master/jest/chart').send()
     expect(res.status).toEqual(200)
     expect(res.get('content-type')).toEqual("image/png")
+
+    done()
+  })
+  it('It gets a badge', async (done) => {
+    const res: Response = await server
+      .get('/coverage/project/master/jest/badge').send()
+    expect(res.status).toEqual(200)
+    expect(res.get('content-type')).toEqual("image/svg+xml; charset=utf-8")
+    expect(res.body.toString()).toEqual('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="20"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="62" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path fill="#555" d="M0 0h31v20H0z"/><path fill="#97ca00" d="M31 0h31v20H31z"/><path fill="url(#b)" d="M0 0h62v20H0z"/></g><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="110"> <text x="165" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="210">jest</text><text x="165" y="140" transform="scale(.1)" textLength="210">jest</text><text x="455" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="210">100</text><text x="455" y="140" transform="scale(.1)" textLength="210">100</text></g> </svg>')
 
     done()
   })

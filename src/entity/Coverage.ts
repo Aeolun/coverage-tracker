@@ -16,6 +16,9 @@ export class Coverage {
   baseBranch: string;
 
   @Column()
+  ref: string;
+
+  @Column()
   testName: string;
 
   @Column()
