@@ -1,0 +1,28 @@
+{
+  "folders": [
+	{
+		"path": "/Users/bart.riepe/Projects/horizon-core"
+	},
+	{
+		"path": "/Users/bart.riepe/Projects/uap-graphql"
+	},
+	{
+		"path": "/Users/bart.riepe/Projects/wp-datamanagement"
+	},
+	{
+		"path": "/Users/bart.riepe/Projects/wp-uap-ds"
+	},
+	{
+		"path": "/Users/bart.riepe/Projects/wp-uap-crypto"
+	},
+	{
+		"path": "/Users/bart.riepe/Projects/uap-ui"
+	},
+	{
+		"path": "."
+	}
+],
+  "settings": {
+    "workbench.colorTheme": "Quiet Light"
+  }
+}

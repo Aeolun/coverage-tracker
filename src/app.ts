@@ -8,6 +8,9 @@ import { json } from 'express'
 import morgan from 'morgan'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { BadgeFactory } from 'gh-badges'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 interface ProjectParams extends ParamsDictionary {
   projectName: string
@@ -68,6 +71,27 @@ app.use(json())
 
 app.get('/', (req, res) => {
   res.status(200).send('Ok')
+})
+app.get('/coverage', (req, res) => {
+  const allGrouped = connection.manager.getRepository(Coverage)
+    .createQueryBuilder('cov')
+    .select('cov.projectName as projectName')
+    .groupBy('cov.projectName')
+    .getRawMany().then(results => {
+      console.log(results)
+      res.status(200).json(results)
+    });
+})
+app.get('/coverage/:projectName', (req, res) => {
+  const allGrouped = connection.manager.getRepository(Coverage)
+    .createQueryBuilder('cov')
+    .select('cov.branch, cov.testName')
+    .where('cov.projectName = :name', { name: req.params.projectName })
+    .groupBy('cov.branch, cov.testName')
+    .getRawMany().then(results => {
+      console.log(results)
+      res.status(200).json(results)
+    });
 })
 app.get<ProjectParams>('/coverage/:projectName/:branch/:testName/check', async (req, res) => {
   if (hasRequiredParams(req.query, checkRequiredProperties)) {
