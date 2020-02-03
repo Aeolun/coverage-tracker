@@ -104,10 +104,7 @@ app.get("/coverage/:projectName/:branch", (req, res) => {
     .getRepository(Coverage)
     .createQueryBuilder("cov")
     .select("cov.testName")
-    .where("cov.projectName = :name AND cov.branch = :branch", {
-      name: req.params.projectName,
-      branch: req.params.branch
-    })
+    .where("cov.projectName = :name", { name: req.params.projectName })
     .groupBy("cov.testName")
     .getRawMany()
     .then(results => {
@@ -225,7 +222,7 @@ app.get<ProjectParams>(
     const format = {
       text: [
         req.params.testName,
-        coverage[0] ? coverage[0].getCoveragePercent() + "%" : "Unknown"
+        coverage[0] ? coverage[0].getCoveragePercent() : "Unknown"
       ],
       color: coverage[0] ? "green" : "lightgray",
       template: "flat"
