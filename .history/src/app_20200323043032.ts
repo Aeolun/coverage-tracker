@@ -324,8 +324,7 @@ app.get<ProjectParams>(
             name: "x",
             type: "utc",
             range: "width",
-            domain: { data: "table", field: "x" },
-            nice: { interval: "week", step: 3 }
+            domain: { data: "table", field: "x" }
           },
           {
             name: "y",
@@ -343,15 +342,7 @@ app.get<ProjectParams>(
           }
         ],
 
-        axes: [
-          {
-            orient: "bottom",
-            scale: "x",
-            zindex: 1,
-            type: "utc"
-          },
-          { orient: "left", scale: "y", zindex: 1 }
-        ],
+        axes: [{ orient: "left", scale: "y", zindex: 1 }],
 
         marks: [
           {

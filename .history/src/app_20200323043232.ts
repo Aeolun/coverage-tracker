@@ -225,7 +225,7 @@ app.get<ProjectParams>(
     const format = {
       text: [
         req.params.testName,
-        coverage[0] ? coverage[0].getCoveragePercent() : "Unknown"
+        coverage[0] ? coverage[0].getCoveragePercent() + "%" : "Unknown"
       ],
       color: coverage[0] ? "green" : "lightgray",
       template: "flat"
@@ -287,6 +287,8 @@ app.get<ProjectParams>(
               "Code coverage for " +
               req.params.projectName +
               " / " +
+              req.params.branch +
+              " / " +
               req.params.testName
           },
           anchor: "start",
@@ -330,7 +332,7 @@ app.get<ProjectParams>(
             range: "height",
             nice: true,
             zero: true,
-            domain: [0, 1]
+            domain: [0, 100]
           },
           {
             name: "color",
@@ -341,7 +343,7 @@ app.get<ProjectParams>(
         ],
 
         axes: [
-          { orient: "bottom", scale: "x", zindex: 1, formatType: "utc" },
+          { orient: "bottom", scale: "x", zindex: 1, formatType: "time" },
           { orient: "left", scale: "y", zindex: 1 }
         ],
 

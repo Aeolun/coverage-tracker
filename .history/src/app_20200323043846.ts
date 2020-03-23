@@ -325,7 +325,7 @@ app.get<ProjectParams>(
             type: "utc",
             range: "width",
             domain: { data: "table", field: "x" },
-            nice: { interval: "week", step: 3 }
+            nice: { interval: "week", step: 1 }
           },
           {
             name: "y",

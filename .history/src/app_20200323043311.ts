@@ -287,6 +287,8 @@ app.get<ProjectParams>(
               "Code coverage for " +
               req.params.projectName +
               " / " +
+              req.params.branch +
+              " / " +
               req.params.testName
           },
           anchor: "start",
@@ -330,7 +332,7 @@ app.get<ProjectParams>(
             range: "height",
             nice: true,
             zero: true,
-            domain: [0, 1]
+            domain: [0, 100]
           },
           {
             name: "color",
@@ -341,7 +343,13 @@ app.get<ProjectParams>(
         ],
 
         axes: [
-          { orient: "bottom", scale: "x", zindex: 1, formatType: "utc" },
+          {
+            orient: "bottom",
+            scale: "x",
+            zindex: 1,
+            formatType: "time",
+            nice: { interval: "month", step: 3 }
+          },
           { orient: "left", scale: "y", zindex: 1 }
         ],
 
