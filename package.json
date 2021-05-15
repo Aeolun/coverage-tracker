@@ -32,7 +32,7 @@
     "reflect-metadata": "^0.1.10",
     "sqlite3": "^4.1.1",
     "typeorm": "0.2.21",
-    "vega": "^5.9.0"
+    "vega": "^5.17.3"
   },
   "jest": {
     "testEnvironment": "node",
